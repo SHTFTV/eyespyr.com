@@ -34,7 +34,7 @@ export const Route = createFileRoute("/how-it-works")({
 const steps = [
   {
     title: "Describe your business",
-    body: "Choose your industry, location and activities. Catering, creative services, trades and property services each have a different preparation checklist.",
+    body: "Choose your industry, location and activities. From trucking and financial advice to catering, creative services and trades, each activity needs its own preparation checklist.",
   },
   {
     title: "Prepare your evidence",

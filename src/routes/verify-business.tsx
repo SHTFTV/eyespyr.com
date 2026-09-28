@@ -4,6 +4,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
 import {
   industries,
+  industryGroups,
   credentialChecklist,
   type Industry,
   type Scope,
@@ -42,6 +43,11 @@ const emptyScope: Scope = {
   drone: false,
   newHomes: false,
   regulated: false,
+  dangerousGoods: false,
+  usTransport: false,
+  investments: false,
+  insuranceAdvice: false,
+  financialTitles: false,
 };
 const recipient = "partnerships@industryarmymarketing.com";
 function VerifyBusiness() {
@@ -61,6 +67,7 @@ function VerifyBusiness() {
       `Contact: ${data.get("contact")}`,
       `Reply email: ${data.get("email")}`,
       `Industry: ${industryLabel}`,
+      `Services and operating jurisdictions: ${data.get("services")}`,
       `Location: ${data.get("city")}, ${location === "bc" ? "British Columbia, Canada" : data.get("region")}`,
       `Website / portfolio: ${data.get("website") || "Not provided"}`,
       "",
@@ -102,10 +109,16 @@ function VerifyBusiness() {
                   setScope(emptyScope);
                 }}
               >
-                {industries.map(([id, label]) => (
-                  <option key={id} value={id}>
-                    {label}
-                  </option>
+                {industryGroups.map((group) => (
+                  <optgroup key={group.label} label={group.label}>
+                    {industries
+                      .filter(([id]) => (group.ids as readonly string[]).includes(id))
+                      .map(([id, label]) => (
+                        <option key={id} value={id}>
+                          {label}
+                        </option>
+                      ))}
+                  </optgroup>
                 ))}
               </select>
             </label>
@@ -137,12 +150,61 @@ function VerifyBusiness() {
                 Province / state and country *
                 <input className={inputClass} name="region" required maxLength={100} />
                 <span className="mt-2 block text-sm text-muted-foreground">
-                  The team will confirm your local requirements. BC examples below are not a
-                  checklist of laws for your location.
+                  The team will confirm your local requirements. Jurisdiction-specific examples
+                  below are not a checklist of laws for other locations.
                 </span>
               </label>
             )}
+            <label className="block">
+              Services and operating jurisdictions *
+              <textarea
+                className={inputClass}
+                name="services"
+                required
+                rows={3}
+                maxLength={500}
+                placeholder="What services do you offer, and in which provinces, states or countries?"
+              />
+            </label>
+            <p className="text-sm text-muted-foreground">
+              Describe business activities only. Do not include client, patient, investor, borrower
+              or driver personal records. Checklists are preparation guides; the relevant regulator
+              determines legal authorisation.
+            </p>
             <div className="space-y-3">
+              {["trucking", "logistics", "passenger"].includes(industry) && (
+                <Option
+                  checked={!!scope.usTransport}
+                  onChange={() => toggle("usTransport")}
+                  label="We operate or arrange transport in the United States"
+                />
+              )}
+              {["trucking", "logistics"].includes(industry) && (
+                <Option
+                  checked={!!scope.dangerousGoods}
+                  onChange={() => toggle("dangerousGoods")}
+                  label="We handle, arrange or transport dangerous goods"
+                />
+              )}
+              {industry === "financial" && (
+                <>
+                  <Option
+                    checked={!!scope.investments}
+                    onChange={() => toggle("investments")}
+                    label="We offer investment advice or deal in securities"
+                  />
+                  <Option
+                    checked={!!scope.insuranceAdvice}
+                    onChange={() => toggle("insuranceAdvice")}
+                    label="We advise on or sell insurance products"
+                  />
+                  <Option
+                    checked={!!scope.financialTitles}
+                    onChange={() => toggle("financialTitles")}
+                    label="We use a financial advisor/planner title or professional designation"
+                  />
+                </>
+              )}
               <p className="font-semibold">Which activities apply? Select all that fit.</p>
               <Option
                 checked={scope.workers}
