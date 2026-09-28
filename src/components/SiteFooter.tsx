@@ -8,36 +8,47 @@ export function SiteFooter() {
         <div>
           <Wordmark className="text-2xl" />
           <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-            The verification and quality-control engine behind the IAM contractor network.
-            Un-riggable scores. Real-time monitoring. Territory-exclusive.
+            Business credential checks for the Industry Army Marketing network. Early access: secure
+            uploads and monitoring are still being prepared.
           </p>
-          <p className="mono-label mt-4">Vancouver · BC · PIPEDA Compliant</p>
+          <p className="mono-label mt-4">Vancouver · BC · Early access</p>
         </div>
-        <FooterCol title="Platform" items={[
-          { to: "/how-it-works", label: "How It Works" },
-          { to: "/transparency", label: "Scoring Transparency" },
-          { to: "/eyespyr", label: "The Badge" },
-          { to: "/scan", label: "Free Scan" },
-          { to: "/talc-tv", label: "TALC.tv Blast" },
-        ]}/>
-        <FooterCol title="Verify" items={[
-          { to: "/verify-business", label: "For Businesses" },
-          { to: "/upload-receipt", label: "For Consumers" },
-          { to: "/network", label: "Coverage Map" },
-          { to: "/pricing", label: "Pricing" },
-        ]}/>
+        <FooterCol
+          title="Platform"
+          items={[
+            { to: "/how-it-works", label: "How It Works" },
+            { to: "/transparency", label: "Scoring Transparency" },
+            { to: "/eyespyr", label: "The Badge" },
+            { to: "/scan", label: "Free Scan" },
+            { to: "/talc-tv", label: "TALC.tv Blast" },
+          ]}
+        />
+        <FooterCol
+          title="Verify"
+          items={[
+            { to: "/verify-business", label: "For Businesses" },
+            { to: "/upload-receipt", label: "For Consumers" },
+            { to: "/network", label: "Coverage Map" },
+            { to: "/pricing", label: "Pricing" },
+          ]}
+        />
 
-        <FooterCol title="Legal" items={[
-          { href: "mailto:legal@industryarmymarketing.com", label: "Contact Legal" },
-          { href: "/IAM-Privacy-Policy.pdf", label: "Privacy" },
-          { href: "/IAM-Terms-of-Service.pdf", label: "Terms" },
-          { href: "/IAM-Legal-Notice.pdf", label: "Legal Notice" },
-        ]}/>
+        <FooterCol
+          title="Legal"
+          items={[
+            { href: "mailto:legal@industryarmymarketing.com", label: "Contact Legal" },
+            { href: "/IAM-Privacy-Policy.pdf", label: "Privacy" },
+            { href: "/IAM-Terms-of-Service.pdf", label: "Terms" },
+            { href: "/IAM-Legal-Notice.pdf", label: "Legal Notice" },
+          ]}
+        />
       </div>
       <div className="border-t border-border/40">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-5 sm:px-8">
           <p className="mono-label">© 2026 Industry Army Marketing Inc.</p>
-          <p className="mono-label">Status · <span className="text-[color:var(--acid)]">All Systems Nominal</span></p>
+          <p className="mono-label">
+            Status · <span className="text-[color:var(--acid)]">Preparing for launch</span>
+          </p>
         </div>
       </div>
     </footer>

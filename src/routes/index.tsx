@@ -81,7 +81,7 @@ function Index() {
         }
         caption="The verification and quality-control engine behind every IAM contractor."
       >
-        <Link to="/scan" className="acid-btn">Get Verified</Link>
+        <Link to="/verify-business" className="acid-btn">Build My Checklist</Link>
         <Link to="/how-it-works" className="ghost-btn">How It Works</Link>
         <Link to="/trust-layer" className="ghost-btn">The Trust Layer</Link>
       </HeroBanner>

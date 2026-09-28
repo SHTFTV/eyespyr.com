@@ -1,17 +1,19 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
-import { submitCredentials } from "@/lib/api";
+import {
+  industries,
+  credentialChecklist,
+  type Industry,
+  type Scope,
+} from "@/lib/credential-checklist";
 import ogImg from "@/assets/og-eyespyr.jpg";
-
 const SITE_URL = "https://eyespyr.com";
 const OG_IMAGE = `${SITE_URL}${ogImg}`;
-
-const TITLE = "Verify Your Business — Upload Credentials to EyeSpyR";
+const TITLE = "Business Credential Checklist & Early Access — EyeSpyR";
 const DESC =
-  "Business license, trade tickets, insurance, WCB clearance, and accreditations. Upload once, verified against the issuing body, badge issued.";
-
+  "Find the credentials relevant to your industry and location. Prepare your checklist and contact EyeSpyR about early access. Document uploads are not open yet.";
 export const Route = createFileRoute("/verify-business")({
   head: () => ({
     meta: [
@@ -32,305 +34,319 @@ export const Route = createFileRoute("/verify-business")({
   component: VerifyBusiness,
 });
 
-const CRED_TYPES = [
-  { id: "business_license", label: "Business License / Registration", required: true },
-  { id: "trade_ticket", label: "Trade Ticket / Red Seal", required: true },
-  { id: "insurance", label: "Liability Insurance Certificate", required: true },
-  { id: "wcb", label: "WCB Clearance Letter", required: true },
-  { id: "accreditation", label: "Manufacturer / Industry Accreditation", required: false },
-  { id: "other", label: "Other (specify below)", required: false },
-] as const;
-
-type CredFile = { type: string; file: File };
-type State =
-  | { kind: "idle" }
-  | { kind: "submitting" }
-  | { kind: "queued"; ref: string; message: string; timeline: TimelineEntry[]; demo: boolean }
-  | { kind: "error"; message: string };
-
-type TimelineEntry = { label: string; status: "pending" | "verifying" | "verified"; note?: string };
-
-const CRED_FIELD_MAP: Record<string, string> = {
-  business_license: "businessLicense",
-  trade_ticket: "tradeTicket",
-  insurance: "insuranceCertificate",
-  wcb: "wcbProof",
-  accreditation: "accreditation",
-  other: "otherCredential",
+const inputClass =
+  "mt-2 w-full rounded-md border border-border bg-background px-3 py-3 text-base text-foreground focus:outline-2 focus:outline-offset-2 focus:outline-[color:var(--acid)]";
+const emptyScope: Scope = {
+  workers: false,
+  alcohol: false,
+  drone: false,
+  newHomes: false,
+  regulated: false,
 };
-
+const recipient = "partnerships@industryarmymarketing.com";
 function VerifyBusiness() {
-  const [state, setState] = useState<State>({ kind: "idle" });
-  const [creds, setCreds] = useState<CredFile[]>([]);
-
-  function addCred(type: string, file: File | null) {
-    if (!file) return;
-    setCreds((cur) => [...cur.filter((c) => c.type !== type), { type, file }]);
-  }
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const [industry, setIndustry] = useState<Industry>("catering");
+  const [scope, setScope] = useState<Scope>(emptyScope);
+  const [location, setLocation] = useState("bc");
+  const [draft, setDraft] = useState("");
+  const checklist = credentialChecklist(industry, scope);
+  const industryLabel = industries.find(([id]) => id === industry)?.[1];
+  function prepare(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setState({ kind: "submitting" });
-
-    // Build payload matching the backend spec exactly.
-    const raw = new FormData(e.currentTarget);
-    const payload = new FormData();
-    payload.set("legalName", String(raw.get("businessName") ?? ""));
-    payload.set("operatingName", String(raw.get("businessName") ?? ""));
-    payload.set("contactEmail", String(raw.get("email") ?? ""));
-    payload.set("registration", String(raw.get("registration") ?? ""));
-    payload.set("trade", String(raw.get("trade") ?? ""));
-    payload.set("territory", String(raw.get("territory") ?? ""));
-    payload.set("website", String(raw.get("website") ?? ""));
-    payload.set("years", String(raw.get("years") ?? ""));
-    payload.set("contactName", String(raw.get("contactName") ?? ""));
-    payload.set("contactRole", String(raw.get("contactRole") ?? ""));
-    payload.set("phone", String(raw.get("phone") ?? ""));
-    payload.set("notes", String(raw.get("notes") ?? ""));
-    payload.set("notifyOnStatusChange", raw.get("notify") ? "true" : "false");
-    for (const c of creds) {
-      const field = CRED_FIELD_MAP[c.type] ?? `credential_${c.type}`;
-      payload.append(field, c.file, c.file.name);
-    }
-
-    const result = await submitCredentials(payload);
-    setState(
-      buildQueuedState(
-        result.businessId,
-        creds,
-        result.demo
-          ? "Submitted to the queue in demo mode. Live verification runs when the API is reachable."
-          : "Submitted. Each credential is verified against the issuing body — you'll get an email at every status change.",
-        !!result.demo,
-      ),
-    );
+    const data = new FormData(e.currentTarget);
+    const body = [
+      "Hello EyeSpyR, I would like help preparing for business verification.",
+      "",
+      `Business: ${data.get("business")}`,
+      `Contact: ${data.get("contact")}`,
+      `Reply email: ${data.get("email")}`,
+      `Industry: ${industryLabel}`,
+      `Location: ${data.get("city")}, ${location === "bc" ? "British Columbia, Canada" : data.get("region")}`,
+      `Website / portfolio: ${data.get("website") || "Not provided"}`,
+      "",
+      "Checklist readiness:",
+      ...checklist.map((item) => `${item.title}: ${data.get(item.id) || "Help me check"}`),
+      "",
+      "This is an early-access enquiry, not a credential submission. No documents are attached.",
+    ].join("\n");
+    setDraft(body);
   }
-
-
+  function toggle(key: keyof Scope) {
+    setScope((current) => ({ ...current, [key]: !current[key] }));
+    setDraft("");
+  }
   return (
     <SiteLayout>
       <PageHero
-        eyebrow="For Operators"
-        title="VERIFY YOUR"
-        accent="BUSINESS"
-        lead="Upload the paperwork once. We validate every document against the issuing body. When it clears, the badge activates and your territory locks."
+        eyebrow="Business verification · Early access"
+        title="YOUR BUSINESS."
+        accent="YOUR CHECKLIST."
+        lead="Tell us what you do and where. See the evidence relevant to your business before you gather any paperwork."
       />
-
       <section className="mx-auto max-w-4xl px-5 pb-24 sm:px-8">
-        {state.kind === "queued" ? (
-          <QueuedCard state={state} onReset={() => { setState({ kind: "idle" }); setCreds([]); }} />
-        ) : (
-          <form onSubmit={onSubmit} className="panel space-y-8 p-7">
-            {/* Business identity */}
-            <fieldset className="space-y-6">
-              <legend className="mono-label">01 · Business Identity</legend>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="Legal Business Name" name="businessName" required maxLength={200} />
-                <Field label="BC Registration # / CRA BN" name="registration" required maxLength={64} placeholder="e.g. BC1234567" />
-              </div>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="Primary Trade" name="trade" required placeholder="Plumbing, Electrical, HVAC…" maxLength={80} />
-                <Field label="City / Territory" name="territory" required placeholder="e.g. Surrey, BC" maxLength={80} />
-              </div>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="Website" name="website" type="url" placeholder="https://…" maxLength={255} />
-                <Field label="Years in Operation" name="years" type="number" min="0" max="150" required />
-              </div>
-            </fieldset>
-
-            {/* Contact */}
-            <fieldset className="space-y-6 border-t border-border/60 pt-8">
-              <legend className="mono-label">02 · Point of Contact</legend>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="Contact Name" name="contactName" required maxLength={120} />
-                <Field label="Role" name="contactRole" required maxLength={80} placeholder="Owner, GM, Ops Lead…" />
-              </div>
-              <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="Business Email" name="email" type="email" required maxLength={255} />
-                <Field label="Phone" name="phone" type="tel" required maxLength={40} />
-              </div>
-            </fieldset>
-
-            {/* Credentials */}
-            <fieldset className="space-y-4 border-t border-border/60 pt-8">
-              <legend className="mono-label">03 · Credentials to Verify</legend>
-              <p className="mono-label text-muted-foreground">
-                PDF, JPG, or PNG — up to 15 MB per file. Files are encrypted at rest. Only the credential type + verification status is public.
-              </p>
-              <div className="grid gap-3">
-                {CRED_TYPES.map((c) => {
-                  const uploaded = creds.find((x) => x.type === c.id);
-                  return (
-                    <div key={c.id} className="grid gap-3 border border-border p-4 sm:grid-cols-[1fr_auto] sm:items-center">
-                      <div>
-                        <p className="font-display text-sm font-bold uppercase">
-                          {c.label}
-                          {c.required && <span className="ml-2 text-[color:var(--acid)]">*</span>}
-                        </p>
-                        {uploaded && <p className="mono-label mt-1 text-[color:var(--acid)]">✓ {uploaded.file.name}</p>}
-                      </div>
-                      <label className="ghost-btn cursor-pointer">
-                        {uploaded ? "Replace" : "Upload"}
-                        <input
-                          type="file"
-                          accept="image/png,image/jpeg,application/pdf"
-                          className="sr-only"
-                          onChange={(e) => addCred(c.id, e.target.files?.[0] ?? null)}
-                        />
-                      </label>
-                    </div>
-                  );
-                })}
-              </div>
-              <TextArea label="Notes (optional)" name="notes" placeholder="Anything the verification team should know — additional certifications, unusual scope, etc." maxLength={1000} />
-            </fieldset>
-
-            {/* Consent */}
-            <fieldset className="space-y-3 border-t border-border/60 pt-8">
-              <legend className="mono-label">04 · Authorization</legend>
-              <label className="flex cursor-pointer items-start gap-3 text-sm text-muted-foreground">
-                <input type="checkbox" name="authorize" required className="mt-1 h-4 w-4 accent-[color:var(--acid)]" />
-                <span>I authorize EyeSpyR to contact the issuing bodies (ITA BC, WorkSafeBC, insurer, CRA) to validate each uploaded credential.</span>
+        <div className="panel mb-8 border-[color:var(--acid)] p-6 text-base leading-relaxed">
+          <strong>Document uploads are not open yet.</strong> You can prepare a checklist and an
+          enquiry now. Nothing is submitted by this form. Secure uploads, credential review and
+          badge activation are still being prepared.
+        </div>
+        <form onSubmit={prepare} onChange={() => setDraft("")} className="space-y-8">
+          <fieldset className="panel space-y-5 p-6 sm:p-8">
+            <legend className="px-2 text-xl font-bold">1. Your business & location</legend>
+            <label className="block">
+              Business type
+              <select
+                className={inputClass}
+                value={industry}
+                onChange={(e) => {
+                  setIndustry(e.target.value as Industry);
+                  setScope(emptyScope);
+                }}
+              >
+                {industries.map(([id, label]) => (
+                  <option key={id} value={id}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label>
+                Where do you operate?
+                <select
+                  className={inputClass}
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                >
+                  <option value="bc">British Columbia, Canada</option>
+                  <option value="other">Another province, state or country</option>
+                </select>
               </label>
-              <label className="flex cursor-pointer items-start gap-3 text-sm text-muted-foreground">
-                <input type="checkbox" name="exclusive" required className="mt-1 h-4 w-4 accent-[color:var(--acid)]" />
-                <span>I understand IAM territories are one-per-100K population, one trade per operator, and are awarded on a first-verified basis.</span>
+              <label>
+                City / service area *
+                <input
+                  className={inputClass}
+                  name="city"
+                  required
+                  maxLength={100}
+                  autoComplete="address-level2"
+                />
               </label>
-              <label className="flex cursor-pointer items-start gap-3 text-sm text-muted-foreground">
-                <input type="checkbox" name="notify" defaultChecked className="mt-1 h-4 w-4 accent-[color:var(--acid)]" />
-                <span>Email me at every status change — <span className="text-foreground/80">received → identity check → verifying → verified/flagged → resolved</span>.</span>
+            </div>
+            {location === "other" && (
+              <label className="block">
+                Province / state and country *
+                <input className={inputClass} name="region" required maxLength={100} />
+                <span className="mt-2 block text-sm text-muted-foreground">
+                  The team will confirm your local requirements. BC examples below are not a
+                  checklist of laws for your location.
+                </span>
               </label>
-
-            </fieldset>
-
-            {state.kind === "error" && <p className="mono-label text-[color:var(--acid)]">{state.message}</p>}
-
-            <button type="submit" disabled={state.kind === "submitting" || creds.length === 0} className="acid-btn w-full justify-center disabled:opacity-60">
-              {state.kind === "submitting" ? "Submitting…" : "Submit for Verification"}
-            </button>
-            {creds.length === 0 && (
-              <p className="mono-label text-center text-muted-foreground">Attach at least one credential to submit.</p>
             )}
-          </form>
-        )}
+            <div className="space-y-3">
+              <p className="font-semibold">Which activities apply? Select all that fit.</p>
+              <Option
+                checked={scope.workers}
+                onChange={() => toggle("workers")}
+                label="We employ workers or use subcontractors"
+              />
+              {["catering", "events"].includes(industry) && (
+                <Option
+                  checked={scope.alcohol}
+                  onChange={() => toggle("alcohol")}
+                  label="We supply or serve alcohol"
+                />
+              )}
+              {["creative", "events"].includes(industry) && (
+                <Option
+                  checked={scope.drone}
+                  onChange={() => toggle("drone")}
+                  label="We offer drone services"
+                />
+              )}
+              {industry === "building" && (
+                <Option
+                  checked={scope.newHomes}
+                  onChange={() => toggle("newHomes")}
+                  label="We build new homes or undertake building-envelope work"
+                />
+              )}
+              {["plumbing", "building", "other"].includes(industry) && (
+                <Option
+                  checked={scope.regulated}
+                  onChange={() => toggle("regulated")}
+                  label="We also perform regulated electrical, gas or similar work"
+                />
+              )}
+            </div>
+          </fieldset>
+          <fieldset className="panel space-y-5 p-6 sm:p-8">
+            <legend className="px-2 text-xl font-bold">2. Your preparation checklist</legend>
+            <p className="text-muted-foreground">
+              These are evidence categories for review, not a declaration that every document is
+              legally required. Requirements depend on your work and location. Selecting “Ready”
+              does not verify a credential.
+            </p>
+            <div aria-live="polite" className="space-y-4">
+              {checklist.map((item) => (
+                <div key={`${industry}-${item.id}`} className="rounded-md border border-border p-5">
+                  <h2 className="text-lg font-bold">{item.title}</h2>
+                  <p className="mt-1 text-sm text-[color:var(--acid)]">{item.when}</p>
+                  <p className="mt-3 leading-relaxed text-muted-foreground">{item.evidence}</p>
+                  {item.source && (
+                    <a
+                      className="mt-3 inline-block underline underline-offset-4"
+                      href={item.source}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Official guidance ↗
+                    </a>
+                  )}
+                  <label className="mt-4 block text-sm">
+                    Readiness — {item.title}
+                    <select className={inputClass} name={item.id} defaultValue="Help me check">
+                      <option>Help me check</option>
+                      <option>Ready</option>
+                      <option>Need to obtain or renew</option>
+                      <option>Not applicable — please review</option>
+                    </select>
+                  </label>
+                </div>
+              ))}
+            </div>
+            <details className="border-t border-border pt-4">
+              <summary className="cursor-pointer font-semibold">
+                What will the upload step look like?
+              </summary>
+              <div className="mt-3 space-y-3 text-muted-foreground">
+                <p>
+                  Once secure uploads open, each relevant credential will have its own card:
+                  document type, issuing body, named business or holder, reference, expiry date (or
+                  “no expiry”), and a file attachment with replace/remove controls.
+                </p>
+                <p>
+                  You will see the accepted formats and file-size limit before uploading, who can
+                  review the document and the retention policy. The future status flow is: received
+                  → in review → checked, more information needed, or unable to verify. An expired
+                  credential will be labelled separately.
+                </p>
+                <p>
+                  Document files should stay private. A future public status will identify what was
+                  checked, the scope and check date. A check is not a guarantee of workmanship, and
+                  payment will not make a credential verified.
+                </p>
+              </div>
+            </details>
+          </fieldset>
+          <fieldset className="panel space-y-5 p-6 sm:p-8">
+            <legend className="px-2 text-xl font-bold">3. Prepare an early-access enquiry</legend>
+            <p className="text-muted-foreground">
+              Required fields are marked *. No payment, territory reservation or document upload is
+              involved.
+            </p>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label>
+                Business / trading name *
+                <input
+                  className={inputClass}
+                  name="business"
+                  required
+                  maxLength={150}
+                  autoComplete="organization"
+                />
+              </label>
+              <label>
+                Your name *
+                <input
+                  className={inputClass}
+                  name="contact"
+                  required
+                  maxLength={100}
+                  autoComplete="name"
+                />
+              </label>
+              <label>
+                Reply email *
+                <input
+                  className={inputClass}
+                  name="email"
+                  type="email"
+                  required
+                  maxLength={180}
+                  autoComplete="email"
+                />
+              </label>
+              <label>
+                Website / public portfolio (optional)
+                <input
+                  className={inputClass}
+                  name="website"
+                  maxLength={200}
+                  placeholder="example.com"
+                />
+              </label>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Do not include identity documents, tax numbers, financial records or client
+              information. This form prepares an email draft on your device; it does not save an
+              application or send an email.
+            </p>
+            <button className="acid-btn w-full justify-center" type="submit">
+              Preview my enquiry
+            </button>
+            {draft && (
+              <div
+                className="space-y-4 rounded-md border border-[color:var(--acid)] p-5"
+                role="status"
+              >
+                <h2 className="text-xl font-bold">Draft ready — not sent</h2>
+                <p>
+                  Review the text, then open your email app and send it to{" "}
+                  <a className="break-all underline" href={`mailto:${recipient}`}>
+                    {recipient}
+                  </a>
+                  . Colin, the founder, will reply from colin@industryarmymarketing.com.
+                </p>
+                <label className="block">
+                  Your enquiry
+                  <textarea readOnly className={inputClass} rows={10} value={draft} />
+                </label>
+                <a
+                  className="acid-btn"
+                  href={`mailto:${recipient}?subject=${encodeURIComponent("EyeSpyR early-access enquiry")}&body=${encodeURIComponent(draft)}`}
+                >
+                  Open email draft
+                </a>
+                <p className="text-sm text-muted-foreground">
+                  No email app? Copy the text above into your webmail. Sending an enquiry does not
+                  issue a badge or activate monitoring.
+                </p>
+              </div>
+            )}
+          </fieldset>
+        </form>
       </section>
     </SiteLayout>
   );
 }
-
-function buildQueuedState(
-  ref: string | undefined,
-  creds: CredFile[],
-  message: string,
-  demo: boolean,
-): Extract<State, { kind: "queued" }> {
-  const timeline: TimelineEntry[] = [
-    { label: "Application received", status: "verified", note: "Entry logged · confirmation email sent" },
-    { label: "Identity check · CRA / BC Registry", status: "verifying" },
-    ...creds.map((c) => ({
-      label: `${prettyCredLabel(c.type)} · ${c.file.name}`,
-      status: "pending" as const,
-      note: "Awaiting issuing-body validation",
-    })),
-    { label: "Territory lock", status: "pending", note: "Reserved pending final approval" },
-    { label: "Badge issue", status: "pending" },
-  ];
-  return {
-    kind: "queued",
-    ref: ref ?? "BIZ-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
-    message,
-    timeline,
-    demo,
-  };
-}
-
-
-function prettyCredLabel(id: string): string {
-  const match = CRED_TYPES.find((c) => c.id === id);
-  return match?.label ?? id;
-}
-
-function QueuedCard({ state, onReset }: { state: Extract<State, { kind: "queued" }>; onReset: () => void }) {
+function Option({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: () => void;
+  label: string;
+}) {
   return (
-    <div className="space-y-8">
-      <div className="panel border-[color:var(--acid)] p-8 text-center shadow-[0_0_60px_-30px_var(--acid)]">
-        <p className="eyebrow">Submitted</p>
-        <h2 className="mt-3 font-display text-3xl font-black uppercase">
-          Reference · <span className="text-[color:var(--acid)]">{state.ref}</span>
-        </h2>
-        <p className="mx-auto mt-4 max-w-lg text-sm text-muted-foreground">{state.message}</p>
-        {state.demo && (
-          <p className="mono-label mt-2 text-muted-foreground">DEMO MODE · LIVE API UNREACHABLE</p>
-        )}
-      </div>
-
-      <div>
-        <p className="eyebrow">Verification Timeline</p>
-        <h3 className="mt-2 font-display text-2xl font-black uppercase">Live status</h3>
-        <ol className="mt-6 space-y-3">
-          {state.timeline.map((t, i) => (
-            <li key={i} className="panel grid gap-3 p-4 sm:grid-cols-[140px_1fr_auto] sm:items-center">
-              <StatusPill status={t.status} />
-              <div>
-                <p className="font-display text-sm font-bold uppercase">{t.label}</p>
-                {t.note && <p className="mono-label mt-1 text-muted-foreground">{t.note}</p>}
-              </div>
-              <p className="mono-label text-right text-muted-foreground">Step {i + 1}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      <div className="flex flex-wrap justify-center gap-3">
-        <Link to="/entry/$id" params={{ id: state.ref }} className="acid-btn">View Public Ledger Entry</Link>
-        <Link to="/transparency" className="ghost-btn">See Scoring Rules</Link>
-        <button onClick={onReset} className="ghost-btn">Submit Another</button>
-      </div>
-
-    </div>
-  );
-}
-
-function StatusPill({ status }: { status: TimelineEntry["status"] }) {
-  const color = status === "verified" ? "var(--acid)" : status === "verifying" ? "#ffd23d" : "color-mix(in oklab, white 40%, transparent)";
-  return (
-    <span
-      className="mono-label inline-flex w-fit items-center gap-2 border px-2 py-1"
-      style={{ borderColor: color, color }}
-    >
-      <span className="inline-block h-2 w-2" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
-      {status.toUpperCase()}
-    </span>
-  );
-}
-
-type FieldProps = React.InputHTMLAttributes<HTMLInputElement> & { label: string; name: string };
-function Field({ label, name, ...rest }: FieldProps) {
-  return (
-    <div>
-      <label htmlFor={name} className="mono-label mb-2 block">{label}</label>
+    <label className="flex cursor-pointer items-start gap-3">
       <input
-        id={name}
-        name={name}
-        {...rest}
-        className="w-full border border-border bg-[color:var(--surface)]/30 px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-[color:var(--acid)]"
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className="mt-1 h-5 w-5 shrink-0 accent-[color:var(--acid)]"
       />
-    </div>
-  );
-}
-
-type TextAreaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string; name: string };
-function TextArea({ label, name, ...rest }: TextAreaProps) {
-  return (
-    <div>
-      <label htmlFor={name} className="mono-label mb-2 block">{label}</label>
-      <textarea
-        id={name}
-        name={name}
-        rows={4}
-        {...rest}
-        className="w-full border border-border bg-[color:var(--surface)]/30 px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-[color:var(--acid)]"
-      />
-    </div>
+      <span>{label}</span>
+    </label>
   );
 }

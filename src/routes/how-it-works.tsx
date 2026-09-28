@@ -6,10 +6,9 @@ import ogImg from "@/assets/og-how-it-works.jpg";
 const SITE_URL = "https://eyespyr.com";
 const OG_IMAGE = `${SITE_URL}${ogImg}`;
 
-
 const HIW_TITLE = "How It Works — EyeSpyR Verification Pipeline";
 const HIW_DESC =
-  "Scan, claim, go live, monitor. The four-step EyeSpyR verification pipeline for trade operators in the IAM network.";
+  "Prepare an industry-specific credential checklist and enquire about EyeSpyR early access. Secure uploads and badge activation are not yet open.";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
@@ -29,98 +28,47 @@ export const Route = createFileRoute("/how-it-works")({
       { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/how-it-works` }],
-
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "HowTo",
-          name: "How EyeSpyR verifies a trade operator",
-          description: HIW_DESC,
-          step: [
-            { "@type": "HowToStep", position: 1, name: "Run Your Free Scan", text: "Drop your URL into the scan bar. In under 60 seconds we return your public reputation score, malware posture, link integrity, and territory status." },
-            { "@type": "HowToStep", position: 2, name: "Claim Your City", text: "Territories are one-per-100K population, one trade per operator. If yours is open, you can claim exclusive rights before a competitor does." },
-            { "@type": "HowToStep", position: 3, name: "Upload Credentials & Go Live", text: "Upload your business license, trade tickets, insurance, and industry accreditations. IAM ops verifies each document against the issuing body, confirms physical presence, and the EyeSpyR badge activates on your listing." },
-            { "@type": "HowToStep", position: 4, name: "Monitor & Grow", text: "24/7 scan cycle runs on your listings, reviews, and website. Anomalies alert you within 5 minutes. You keep the badge by holding a 4.5+." },
-          ],
-        }),
-      },
-    ],
   }),
   component: HowItWorks,
 });
-
-
 const steps = [
   {
-    n: "01",
-    title: "Run Your Free Scan",
-    body: "Drop your URL into the scan bar. In under 60 seconds we return your public reputation score, malware posture, link integrity, and territory status.",
+    title: "Describe your business",
+    body: "Choose your industry, location and activities. Catering, creative services, trades and property services each have a different preparation checklist.",
   },
   {
-    n: "02",
-    title: "Claim Your City",
-    body: "Territories are one-per-100K population, one trade per operator. If yours is open, you can claim exclusive rights before a competitor does.",
+    title: "Prepare your evidence",
+    body: "Review the relevant evidence categories and mark what is ready, missing or not applicable. No documents are uploaded at this stage.",
   },
   {
-    n: "03",
-    title: "Upload Credentials & Go Live",
-    body: "Upload your business license, trade tickets, insurance, and any manufacturer or industry accreditations. IAM ops verifies each document against the issuing body, confirms physical presence, and the EyeSpyR badge activates on your listing.",
+    title: "Ask about early access",
+    body: "Preview an enquiry and send it through your email app. Colin will reply to discuss the appropriate next step. The form itself does not send or store an application.",
   },
-
   {
-    n: "04",
-    title: "Monitor & Grow",
-    body: "24/7 scan cycle runs on your listings, reviews, and website. Anomalies alert you within 5 minutes. You keep the badge by holding a 4.5+.",
+    title: "Credential review — coming later",
+    body: "Secure document intake and real credential review must be connected before badges are issued. Any future status will identify the evidence checked and its scope. Monitoring and directory membership are separate services.",
   },
 ];
-
 function HowItWorks() {
   return (
     <SiteLayout>
       <PageHero
-        eyebrow="The Pipeline"
-        title="FROM SCAN"
-        accent="TO VERIFIED"
-        lead="Four steps. No sales call required. Most operators go live inside a business day."
+        eyebrow="Early access"
+        title="A CLEAR PATH"
+        accent="TO VERIFICATION"
+        lead="Start with the right checklist. No instant badge, payment or territory commitment."
       />
-
-      <section className="mx-auto max-w-5xl px-5 py-20 sm:px-8">
-        <ol className="space-y-4">
-          {steps.map((s, i) => (
-            <li
-              key={s.n}
-              className="panel grid gap-6 p-8 sm:grid-cols-[auto_1fr] sm:items-center"
-            >
-              <div className="flex items-center gap-4 sm:flex-col sm:items-start">
-                <span className="font-display text-6xl font-black text-[color:var(--acid)]">
-                  {s.n}
-                </span>
-                <span className="mono-label">
-                  Step {i + 1} · of {steps.length}
-                </span>
-              </div>
-              <div>
-                <h3 className="font-display text-2xl font-bold uppercase sm:text-3xl">
-                  {s.title}
-                </h3>
-                <p className="mt-3 text-muted-foreground">{s.body}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-
-        <div className="mt-16 border border-[color:var(--acid)]/50 bg-[color:var(--acid)]/5 p-8 text-center">
-          <p className="eyebrow">Ready?</p>
-          <h2 className="mt-3 font-display text-3xl font-black uppercase">
-            Start with the <span className="text-[color:var(--acid)]">Free Scan</span>
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-            No credit card, no onboarding call. You’ll see your score and territory availability immediately.
-          </p>
-          <Link to="/scan" className="acid-btn mt-6">Run Free Scan</Link>
-        </div>
+      <section className="mx-auto max-w-4xl space-y-6 px-5 pb-24 sm:px-8">
+        {steps.map((step, i) => (
+          <article className="panel p-7" key={step.title}>
+            <p className="eyebrow">Step {i + 1}</p>
+            <h2 className="mt-2 text-2xl font-bold">{step.title}</h2>
+            <p className="mt-3 leading-relaxed text-muted-foreground">{step.body}</p>
+          </article>
+        ))}
+        <Link to="/verify-business" className="acid-btn">
+          Build my checklist
+        </Link>
       </section>
     </SiteLayout>
   );

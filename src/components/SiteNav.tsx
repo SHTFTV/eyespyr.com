@@ -11,7 +11,6 @@ const links = [
   { to: "/pricing", label: "Pricing" },
 ] as const;
 
-
 export function SiteNav() {
   const [open, setOpen] = useState(false);
   return (
@@ -36,8 +35,8 @@ export function SiteNav() {
               {l.label}
             </Link>
           ))}
-          <Link to="/scan" className="acid-btn ml-3">
-            Free Scan
+          <Link to="/verify-business" className="acid-btn ml-3">
+            Get Started
           </Link>
         </nav>
 
@@ -64,8 +63,12 @@ export function SiteNav() {
                 {l.label}
               </Link>
             ))}
-            <Link to="/scan" onClick={() => setOpen(false)} className="acid-btn mt-3 justify-center">
-              Free Scan
+            <Link
+              to="/verify-business"
+              onClick={() => setOpen(false)}
+              className="acid-btn mt-3 justify-center"
+            >
+              Get Started
             </Link>
           </div>
         </div>
