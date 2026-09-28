@@ -9,6 +9,7 @@ import {
   type Industry,
   type Scope,
 } from "@/lib/credential-checklist";
+import { enquiryDelivery, sendEnquiry } from "@/lib/enquiry.functions";
 import ogImg from "@/assets/og-eyespyr.jpg";
 const SITE_URL = "https://eyespyr.com";
 const OG_IMAGE = `${SITE_URL}${ogImg}`;
@@ -16,6 +17,7 @@ const TITLE = "Business Credential Checklist & Early Access — EyeSpyR";
 const DESC =
   "Find the credentials relevant to your industry and location. Prepare your checklist and contact EyeSpyR about early access. Document uploads are not open yet.";
 export const Route = createFileRoute("/verify-business")({
+  loader: () => enquiryDelivery(),
   head: () => ({
     meta: [
       { title: TITLE },
@@ -54,7 +56,12 @@ function VerifyBusiness() {
   const [industry, setIndustry] = useState<Industry>("catering");
   const [scope, setScope] = useState<Scope>(emptyScope);
   const [location, setLocation] = useState("bc");
+  const { enabled } = Route.useLoaderData();
   const [draft, setDraft] = useState("");
+  const [replyEmail, setReplyEmail] = useState("");
+  const [requestId, setRequestId] = useState("");
+  const [trap, setTrap] = useState("");
+  const [delivery, setDelivery] = useState<"idle" | "sending" | "accepted" | "failed">("idle");
   const checklist = credentialChecklist(industry, scope);
   const industryLabel = industries.find(([id]) => id === industry)?.[1];
   function prepare(e: FormEvent<HTMLFormElement>) {
@@ -67,6 +74,13 @@ function VerifyBusiness() {
       `Contact: ${data.get("contact")}`,
       `Reply email: ${data.get("email")}`,
       `Industry: ${industryLabel}`,
+      `Business description: ${data.get("description")}`,
+      `Three keywords: ${[1, 2, 3].map((i) => data.get(`keyword${i}`)).join(", ")}`,
+      `Service areas: ${data.get("serviceAreas")}`,
+      `Service delivery: ${data.get("serviceMode")}`,
+      `Business phone (optional): ${data.get("phone") || "Not provided"}`,
+      `Commercial readiness review: ${data.get("commercial") || "Not requested"}`,
+      `Additional information: ${data.get("notes") || "None"}`,
       `Services and operating jurisdictions: ${data.get("services")}`,
       `Location: ${data.get("city")}, ${location === "bc" ? "British Columbia, Canada" : data.get("region")}`,
       `Website / portfolio: ${data.get("website") || "Not provided"}`,
@@ -76,7 +90,23 @@ function VerifyBusiness() {
       "",
       "This is an early-access enquiry, not a credential submission. No documents are attached.",
     ].join("\n");
+    setReplyEmail(String(data.get("email")));
+    setTrap(String(data.get("websiteExtra") || ""));
+    setRequestId(crypto.randomUUID());
+    setDelivery("idle");
     setDraft(body);
+  }
+  async function send() {
+    if (delivery === "sending" || delivery === "accepted") return;
+    setDelivery("sending");
+    try {
+      const result = await sendEnquiry({
+        data: { email: replyEmail, body: draft, requestId, websiteExtra: trap, consent: true },
+      });
+      setDelivery(result.accepted ? "accepted" : "failed");
+    } catch {
+      setDelivery("failed");
+    }
   }
   function toggle(key: keyof Scope) {
     setScope((current) => ({ ...current, [key]: !current[key] }));
@@ -87,16 +117,25 @@ function VerifyBusiness() {
       <PageHero
         eyebrow="Business verification · Early access"
         title="YOUR BUSINESS."
-        accent="YOUR CHECKLIST."
-        lead="Tell us what you do and where. See the evidence relevant to your business before you gather any paperwork."
+        accent="YOUR PROFILE."
+        lead="Introduce your business, choose three service keywords and tell us where you work. Review your industry checklist, then contact our partnerships team."
       />
       <section className="mx-auto max-w-4xl px-5 pb-24 sm:px-8">
         <div className="panel mb-8 border-[color:var(--acid)] p-6 text-base leading-relaxed">
-          <strong>Document uploads are not open yet.</strong> You can prepare a checklist and an
-          enquiry now. Nothing is submitted by this form. Secure uploads, credential review and
-          badge activation are still being prepared.
+          <strong>Start with your business profile.</strong>{" "}
+          {enabled
+            ? "Review your details, then send your enquiry to our partnerships team."
+            : "Fill out your details and preview an email to our partnerships team. Direct website sending is being connected; for now, send the prepared draft through your email app."}{" "}
+          Secure document uploads and badge activation are not open yet.
         </div>
-        <form onSubmit={prepare} onChange={() => setDraft("")} className="space-y-8">
+        <form
+          onSubmit={prepare}
+          onChange={() => {
+            setDraft("");
+            setDelivery("idle");
+          }}
+          className="space-y-8"
+        >
           <fieldset className="panel space-y-5 p-6 sm:p-8">
             <legend className="px-2 text-xl font-bold">1. Your business & location</legend>
             <label className="block">
@@ -135,7 +174,7 @@ function VerifyBusiness() {
                 </select>
               </label>
               <label>
-                City / service area *
+                Business base / city *
                 <input
                   className={inputClass}
                   name="city"
@@ -155,6 +194,53 @@ function VerifyBusiness() {
                 </span>
               </label>
             )}
+            <label className="block">
+              Business description *
+              <textarea
+                className={inputClass}
+                name="description"
+                required
+                rows={4}
+                maxLength={1200}
+                placeholder="Tell us what your business does, who you help and what makes your approach different."
+              />
+            </label>
+            <div>
+              <p className="font-semibold">Your three service keywords *</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Use a service or short phrase for each, such as drain cleaning, wedding catering or
+                freight hauling.
+              </p>
+              <div className="mt-3 grid gap-4 sm:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <label key={i}>
+                    Keyword {i} *
+                    <input className={inputClass} name={`keyword${i}`} required maxLength={60} />
+                  </label>
+                ))}
+              </div>
+            </div>
+            <label className="block">
+              Service areas *
+              <textarea
+                className={inputClass}
+                name="serviceAreas"
+                required
+                rows={2}
+                maxLength={500}
+                placeholder="Cities, neighbourhoods, regions or routes you serve. Include any travel radius or remote coverage."
+              />
+            </label>
+            <label className="block">
+              How do you serve customers?
+              <select className={inputClass} name="serviceMode">
+                <option>At the customer’s location</option>
+                <option>At our business premises</option>
+                <option>Online / remote</option>
+                <option>Transport routes / delivery</option>
+                <option>A combination — described below</option>
+              </select>
+            </label>
             <label className="block">
               Services and operating jurisdictions *
               <textarea
@@ -301,7 +387,7 @@ function VerifyBusiness() {
             </details>
           </fieldset>
           <fieldset className="panel space-y-5 p-6 sm:p-8">
-            <legend className="px-2 text-xl font-bold">3. Prepare an early-access enquiry</legend>
+            <legend className="px-2 text-xl font-bold">3. Contact & review</legend>
             <p className="text-muted-foreground">
               Required fields are marked *. No payment, territory reservation or document upload is
               involved.
@@ -348,11 +434,52 @@ function VerifyBusiness() {
                 />
               </label>
             </div>
+            <label className="block">
+              Business phone (optional)
+              <input
+                className={inputClass}
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                maxLength={50}
+              />
+            </label>
+            <label className="block">
+              Commercial readiness (optional)
+              <select className={inputClass} name="commercial">
+                <option>Not requested</option>
+                <option>
+                  I would like help with bonding, supplier references or commercial insurance
+                  evidence
+                </option>
+                <option>
+                  I would like help with carrier authority, cargo insurance or transport evidence
+                </option>
+                <option>Please help me choose the relevant evidence</option>
+              </select>
+            </label>
+            <label className="block">
+              Anything else we should know? (optional)
+              <textarea className={inputClass} name="notes" rows={3} maxLength={1000} />
+            </label>
+            <div hidden aria-hidden="true">
+              <label>
+                Leave this blank
+                <input name="websiteExtra" tabIndex={-1} autoComplete="off" />
+              </label>
+            </div>
             <p className="text-sm text-muted-foreground">
-              Do not include identity documents, tax numbers, financial records or client
-              information. This form prepares an email draft on your device; it does not save an
-              application or send an email.
+              Business information only. Do not include identity documents, tax numbers, financial
+              records or client information. An enquiry does not create a public listing or verify
+              your business.
             </p>
+            <label className="flex items-start gap-3">
+              <input type="checkbox" required name="consent" className="mt-1 h-5 w-5 shrink-0" />
+              <span>
+                I agree to share these details with Industry Army Marketing’s partnerships team for
+                this enquiry and to be contacted about it. This is not a newsletter signup.
+              </span>
+            </label>
             <button className="acid-btn w-full justify-center" type="submit">
               Preview my enquiry
             </button>
@@ -361,9 +488,15 @@ function VerifyBusiness() {
                 className="space-y-4 rounded-md border border-[color:var(--acid)] p-5"
                 role="status"
               >
-                <h2 className="text-xl font-bold">Draft ready — not sent</h2>
+                <h2 className="text-xl font-bold">
+                  {delivery === "accepted"
+                    ? "Enquiry accepted for email delivery"
+                    : "Review your enquiry — not sent"}
+                </h2>
                 <p>
-                  Review the text, then open your email app and send it to{" "}
+                  {enabled
+                    ? "Send your reviewed enquiry to "
+                    : "Open your email app and send your reviewed enquiry to "}
                   <a className="break-all underline" href={`mailto:${recipient}`}>
                     {recipient}
                   </a>
@@ -373,12 +506,40 @@ function VerifyBusiness() {
                   Your enquiry
                   <textarea readOnly className={inputClass} rows={10} value={draft} />
                 </label>
-                <a
-                  className="acid-btn"
-                  href={`mailto:${recipient}?subject=${encodeURIComponent("EyeSpyR early-access enquiry")}&body=${encodeURIComponent(draft)}`}
-                >
-                  Open email draft
-                </a>
+                {enabled && (
+                  <button
+                    type="button"
+                    className="acid-btn"
+                    disabled={delivery === "sending" || delivery === "accepted"}
+                    onClick={send}
+                  >
+                    {delivery === "sending"
+                      ? "Sending…"
+                      : delivery === "accepted"
+                        ? "Accepted for delivery"
+                        : "Send to partnerships"}
+                  </button>
+                )}
+                {delivery === "accepted" && (
+                  <p>
+                    Your email provider submission was accepted. This is not confirmation of inbox
+                    delivery or business verification.
+                  </p>
+                )}
+                {delivery === "failed" && (
+                  <p role="alert">
+                    We could not confirm sending. Your details are still here. Retry or send the
+                    email draft below.
+                  </p>
+                )}
+                {delivery !== "accepted" && (
+                  <a
+                    className="acid-btn"
+                    href={`mailto:${recipient}?subject=${encodeURIComponent("EyeSpyR early-access enquiry")}&body=${encodeURIComponent(draft)}`}
+                  >
+                    Open email draft
+                  </a>
+                )}
                 <p className="text-sm text-muted-foreground">
                   No email app? Copy the text above into your webmail. Sending an enquiry does not
                   issue a badge or activate monitoring.
