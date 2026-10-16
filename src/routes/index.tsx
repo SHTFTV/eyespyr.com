@@ -1,14 +1,11 @@
+import { MarkEttHero } from "@/components/MarkEttHero";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
-import { HeroBanner } from "@/components/HeroBanner";
 import { ScanBar } from "@/components/ScanBar";
 import { EyeMark } from "@/components/EyeMark";
-import ogHome from "@/assets/og-home.jpg";
-import heroAsset from "@/assets/eyespyr-hero-banner.png.asset.json";
-import { IAM_TARGET_URL, trackEvent } from "@/lib/analytics";
 
 const SITE_URL = "https://eyespyr.com";
-const OG_IMAGE = `${SITE_URL}${ogHome}`;
+const OG_IMAGE = `${SITE_URL}/markett/share-v1.jpg`;
 
 
 const HOME_DESC =
@@ -26,6 +23,8 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: OG_IMAGE },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:alt", content: "EyeSpyR — Go beyond the claim. Find the source." },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "EyeSpyR — Trusted Business Identity Infrastructure" },
       { name: "twitter:description", content: HOME_DESC },
@@ -71,20 +70,8 @@ const slas = [
 function Index() {
   return (
     <SiteLayout>
-      <HeroBanner
-        image={heroAsset.url}
-        imageAlt="EyeSpyR — un-riggable verification for the IAM trade network"
-        href={IAM_TARGET_URL}
-        hrefLabel="Visit Industry Army Marketing"
-        onHrefClick={() =>
-          trackEvent({ name: "hero_outbound_click", url: IAM_TARGET_URL, page: "/" })
-        }
-        caption="The verification and quality-control engine behind every IAM contractor."
-      >
-        <Link to="/verify-business" className="acid-btn">Build My Checklist</Link>
-        <Link to="/how-it-works" className="ghost-btn">How It Works</Link>
-        <Link to="/trust-layer" className="ghost-btn">The Trust Layer</Link>
-      </HeroBanner>
+      <MarkEttHero name="EyeSpyR" brand={<><EyeMark size={88} score={0}/><span>Eye<span style={{color:"#b7ed4b"}}>SpyR</span></span></>} eyebrow="IDENTITY · SOURCES · PROVENANCE" title="Go beyond the claim. Find the source." description="Bring your business identity, supporting records and questions into focus. Explore the trust framework and build your verification checklist." primaryHref="/verify-business" primaryLabel="Build your checklist" secondaryHref="/how-it-works" secondaryLabel="How it works" accent="#b7ed4b" cardTitle="Start with the source." cardText="Prepare your business details and supporting records. The checklist helps you organise what to review; opening it does not verify your business."/>
+
       <div className="mx-auto max-w-3xl px-5 pb-10 sm:px-8"><ScanBar /></div>
 
       {/* Score badge showcase */}
