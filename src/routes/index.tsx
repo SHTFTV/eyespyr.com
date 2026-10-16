@@ -1,3 +1,4 @@
+import { SourceStory } from "@/components/SourceStory";
 import { MarkEttHero } from "@/components/MarkEttHero";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -74,40 +75,7 @@ function Index() {
 
       <div className="mx-auto max-w-3xl px-5 pb-10 sm:px-8"><ScanBar /></div>
 
-      {/* Score badge showcase */}
-      <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
-        <div className="grid items-center gap-10 md:grid-cols-[auto_1fr]">
-          <div className="panel flex flex-col items-center gap-3 p-8">
-            <EyeMark size={160} score={4.8} className="text-foreground" />
-            <p className="mono-label">Live Trust Signal</p>
-            <p className="font-display text-5xl font-black text-[color:var(--acid)]">4.8<span className="text-xl text-muted-foreground">/5.0</span></p>
-            <p className="mono-label">Network Aggregate · 340 Ops</p>
-          </div>
-          <div>
-            <p className="eyebrow">Why EyeSpyR</p>
-            <h2 className="mt-3 font-display text-4xl font-black uppercase leading-tight sm:text-5xl">
-              A score you can’t <span className="text-[color:var(--acid)]">buy, fake, or clean</span>.
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              Generic review sites let bad actors gate, suppress, and pay their way to the top.
-              EyeSpyR runs four parallel data streams on every member — 24/7 — and refuses to
-              hide bad signal. A 4.5+ here means something because it cannot be gamed.
-            </p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {[
-                ["340+", "Verified operators"],
-                ["4.7", "Median score"],
-                ["<5m", "Alert latency"],
-              ].map(([n, l]) => (
-                <div key={l} className="border border-border p-4">
-                  <p className="font-display text-3xl font-black text-[color:var(--acid)]">{n}</p>
-                  <p className="mono-label mt-1">{l}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <SourceStory image="/markett/source-records-v2.webp" label="01 / IDENTITY" title="A name is the start. Records add context." description="Business identity begins with details you can trace: who operates the business, where records come from and when they were checked." href="/verify-business" link="Prepare your business details"/>
 
       {/* Pillars */}
       <section className="border-y border-border/60 bg-[color:var(--surface)]/30 px-5 py-20 sm:px-8">
@@ -130,6 +98,8 @@ function Index() {
           </div>
         </div>
       </section>
+
+      <SourceStory image="/markett/source-signals-v2.webp" label="02 / INDEPENDENT SOURCES" title="Look at the evidence from more than one angle." description="Different records tell different parts of a story. Understand what each source supports, what remains uncertain and what needs another look." href="/how-it-works" link="Explore the framework"/>
 
       {/* SLA */}
       <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
@@ -154,6 +124,8 @@ function Index() {
           ))}
         </div>
       </section>
+
+      <SourceStory image="/markett/source-provenance-v2.webp" label="03 / PROVENANCE" title="Connect the claim to the work." description="A project photograph, a service record and its source can add useful context. Keep the original evidence and its limitations in view." href="/transparency" link="Read about transparency"/>
 
       {/* Two-sided verification */}
       <section className="border-y border-border/60 bg-[color:var(--surface)]/30 px-5 py-20 sm:px-8">

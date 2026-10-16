@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { nitro } from "nitro/vite";
 
-export default defineConfig({
-  plugins: [tailwindcss(), tsconfigPaths({projects:["./tsconfig.json"]}), tanstackStart({server:{entry:"server"}}), nitro({preset:"vercel"}), react()],
+export default defineConfig(({command}) => ({
+  plugins: [tailwindcss(), tsconfigPaths({projects:["./tsconfig.json"]}), tanstackStart({server:{entry:"server"}}), ...(command === "build" ? [nitro({preset:"vercel"})] : []), react()],
   resolve: {dedupe:["react","react-dom","@tanstack/react-router","@tanstack/react-start"]},
-});
+}));
