@@ -1,3 +1,4 @@
+import { JournalCards } from "@/components/ContentJournal";
 import { SourceStory } from "@/components/SourceStory";
 import { MarkEttHero } from "@/components/MarkEttHero";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -219,6 +220,6 @@ function Index() {
           </div>
         </div>
       </section>
-    </SiteLayout>
+    <JournalCards/></SiteLayout>
   );
 }

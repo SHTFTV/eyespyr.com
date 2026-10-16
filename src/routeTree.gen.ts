@@ -9,75 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VerifyBusinessRouteImport } from './routes/verify-business'
-import { Route as UploadReceiptRouteImport } from './routes/upload-receipt'
-import { Route as TransparencyRouteImport } from './routes/transparency'
-import { Route as TalcTvRouteImport } from './routes/talc-tv'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ScanRouteImport } from './routes/scan'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as NetworkRouteImport } from './routes/network'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as EyespyrRouteImport } from './routes/eyespyr'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as EyespyrRouteImport } from './routes/eyespyr'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as NetworkRouteImport } from './routes/network'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as ScanRouteImport } from './routes/scan'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TalcTvRouteImport } from './routes/talc-tv'
+import { Route as TransparencyRouteImport } from './routes/transparency'
+import { Route as TrustLayerRouteImport } from './routes/trust-layer'
+import { Route as UploadReceiptRouteImport } from './routes/upload-receipt'
+import { Route as VerifyBusinessRouteImport } from './routes/verify-business'
+import { Route as WhereWeComeFromRouteImport } from './routes/where-we-come-from'
 import { Route as EntryIdRouteImport } from './routes/entry.$id'
+import { Route as JournalIndexRouteImport } from './routes/journal.index'
+import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
 import { Route as ApiPublicSeoCheckRouteImport } from './routes/api/public/seo-check'
 
-const VerifyBusinessRoute = VerifyBusinessRouteImport.update({
-  id: '/verify-business',
-  path: '/verify-business',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UploadReceiptRoute = UploadReceiptRouteImport.update({
-  id: '/upload-receipt',
-  path: '/upload-receipt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TransparencyRoute = TransparencyRouteImport.update({
-  id: '/transparency',
-  path: '/transparency',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TalcTvRoute = TalcTvRouteImport.update({
-  id: '/talc-tv',
-  path: '/talc-tv',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ScanRoute = ScanRouteImport.update({
-  id: '/scan',
-  path: '/scan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
-  id: '/robots.txt',
-  path: '/robots.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NetworkRoute = NetworkRouteImport.update({
-  id: '/network',
-  path: '/network',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EyespyrRoute = EyespyrRouteImport.update({
-  id: '/eyespyr',
-  path: '/eyespyr',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -85,14 +39,84 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const EyespyrRoute = EyespyrRouteImport.update({
+  id: '/eyespyr',
+  path: '/eyespyr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NetworkRoute = NetworkRouteImport.update({
+  id: '/network',
+  path: '/network',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScanRoute = ScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TalcTvRoute = TalcTvRouteImport.update({
+  id: '/talc-tv',
+  path: '/talc-tv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransparencyRoute = TransparencyRouteImport.update({
+  id: '/transparency',
+  path: '/transparency',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrustLayerRoute = TrustLayerRouteImport.update({
+  id: '/trust-layer',
+  path: '/trust-layer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UploadReceiptRoute = UploadReceiptRouteImport.update({
+  id: '/upload-receipt',
+  path: '/upload-receipt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyBusinessRoute = VerifyBusinessRouteImport.update({
+  id: '/verify-business',
+  path: '/verify-business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WhereWeComeFromRoute = WhereWeComeFromRouteImport.update({
+  id: '/where-we-come-from',
+  path: '/where-we-come-from',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntryIdRoute = EntryIdRouteImport.update({
   id: '/entry/$id',
   path: '/entry/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalIndexRoute = JournalIndexRouteImport.update({
+  id: '/journal/',
+  path: '/journal/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalSlugRoute = JournalSlugRouteImport.update({
+  id: '/journal/$slug',
+  path: '/journal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicSeoCheckRoute = ApiPublicSeoCheckRouteImport.update({
@@ -113,9 +137,13 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/talc-tv': typeof TalcTvRoute
   '/transparency': typeof TransparencyRoute
+  '/trust-layer': typeof TrustLayerRoute
   '/upload-receipt': typeof UploadReceiptRoute
   '/verify-business': typeof VerifyBusinessRoute
+  '/where-we-come-from': typeof WhereWeComeFromRoute
   '/entry/$id': typeof EntryIdRoute
+  '/journal/$slug': typeof JournalSlugRoute
+  '/journal/': typeof JournalIndexRoute
   '/api/public/seo-check': typeof ApiPublicSeoCheckRoute
 }
 export interface FileRoutesByTo {
@@ -130,9 +158,13 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/talc-tv': typeof TalcTvRoute
   '/transparency': typeof TransparencyRoute
+  '/trust-layer': typeof TrustLayerRoute
   '/upload-receipt': typeof UploadReceiptRoute
   '/verify-business': typeof VerifyBusinessRoute
+  '/where-we-come-from': typeof WhereWeComeFromRoute
   '/entry/$id': typeof EntryIdRoute
+  '/journal/$slug': typeof JournalSlugRoute
+  '/journal': typeof JournalIndexRoute
   '/api/public/seo-check': typeof ApiPublicSeoCheckRoute
 }
 export interface FileRoutesById {
@@ -148,9 +180,13 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/talc-tv': typeof TalcTvRoute
   '/transparency': typeof TransparencyRoute
+  '/trust-layer': typeof TrustLayerRoute
   '/upload-receipt': typeof UploadReceiptRoute
   '/verify-business': typeof VerifyBusinessRoute
+  '/where-we-come-from': typeof WhereWeComeFromRoute
   '/entry/$id': typeof EntryIdRoute
+  '/journal/$slug': typeof JournalSlugRoute
+  '/journal/': typeof JournalIndexRoute
   '/api/public/seo-check': typeof ApiPublicSeoCheckRoute
 }
 export interface FileRouteTypes {
@@ -167,9 +203,13 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/talc-tv'
     | '/transparency'
+    | '/trust-layer'
     | '/upload-receipt'
     | '/verify-business'
+    | '/where-we-come-from'
     | '/entry/$id'
+    | '/journal/$slug'
+    | '/journal/'
     | '/api/public/seo-check'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -184,9 +224,13 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/talc-tv'
     | '/transparency'
+    | '/trust-layer'
     | '/upload-receipt'
     | '/verify-business'
+    | '/where-we-come-from'
     | '/entry/$id'
+    | '/journal/$slug'
+    | '/journal'
     | '/api/public/seo-check'
   id:
     | '__root__'
@@ -201,9 +245,13 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/talc-tv'
     | '/transparency'
+    | '/trust-layer'
     | '/upload-receipt'
     | '/verify-business'
+    | '/where-we-come-from'
     | '/entry/$id'
+    | '/journal/$slug'
+    | '/journal/'
     | '/api/public/seo-check'
   fileRoutesById: FileRoutesById
 }
@@ -219,89 +267,23 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TalcTvRoute: typeof TalcTvRoute
   TransparencyRoute: typeof TransparencyRoute
+  TrustLayerRoute: typeof TrustLayerRoute
   UploadReceiptRoute: typeof UploadReceiptRoute
   VerifyBusinessRoute: typeof VerifyBusinessRoute
+  WhereWeComeFromRoute: typeof WhereWeComeFromRoute
   EntryIdRoute: typeof EntryIdRoute
+  JournalSlugRoute: typeof JournalSlugRoute
+  JournalIndexRoute: typeof JournalIndexRoute
   ApiPublicSeoCheckRoute: typeof ApiPublicSeoCheckRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/verify-business': {
-      id: '/verify-business'
-      path: '/verify-business'
-      fullPath: '/verify-business'
-      preLoaderRoute: typeof VerifyBusinessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/upload-receipt': {
-      id: '/upload-receipt'
-      path: '/upload-receipt'
-      fullPath: '/upload-receipt'
-      preLoaderRoute: typeof UploadReceiptRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/transparency': {
-      id: '/transparency'
-      path: '/transparency'
-      fullPath: '/transparency'
-      preLoaderRoute: typeof TransparencyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/talc-tv': {
-      id: '/talc-tv'
-      path: '/talc-tv'
-      fullPath: '/talc-tv'
-      preLoaderRoute: typeof TalcTvRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/scan': {
-      id: '/scan'
-      path: '/scan'
-      fullPath: '/scan'
-      preLoaderRoute: typeof ScanRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/robots.txt': {
-      id: '/robots.txt'
-      path: '/robots.txt'
-      fullPath: '/robots.txt'
-      preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/network': {
-      id: '/network'
-      path: '/network'
-      fullPath: '/network'
-      preLoaderRoute: typeof NetworkRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/eyespyr': {
-      id: '/eyespyr'
-      path: '/eyespyr'
-      fullPath: '/eyespyr'
-      preLoaderRoute: typeof EyespyrRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -311,11 +293,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/eyespyr': {
+      id: '/eyespyr'
+      path: '/eyespyr'
+      fullPath: '/eyespyr'
+      preLoaderRoute: typeof EyespyrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/network': {
+      id: '/network'
+      path: '/network'
+      fullPath: '/network'
+      preLoaderRoute: typeof NetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scan': {
+      id: '/scan'
+      path: '/scan'
+      fullPath: '/scan'
+      preLoaderRoute: typeof ScanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/talc-tv': {
+      id: '/talc-tv'
+      path: '/talc-tv'
+      fullPath: '/talc-tv'
+      preLoaderRoute: typeof TalcTvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transparency': {
+      id: '/transparency'
+      path: '/transparency'
+      fullPath: '/transparency'
+      preLoaderRoute: typeof TransparencyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trust-layer': {
+      id: '/trust-layer'
+      path: '/trust-layer'
+      fullPath: '/trust-layer'
+      preLoaderRoute: typeof TrustLayerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upload-receipt': {
+      id: '/upload-receipt'
+      path: '/upload-receipt'
+      fullPath: '/upload-receipt'
+      preLoaderRoute: typeof UploadReceiptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-business': {
+      id: '/verify-business'
+      path: '/verify-business'
+      fullPath: '/verify-business'
+      preLoaderRoute: typeof VerifyBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/where-we-come-from': {
+      id: '/where-we-come-from'
+      path: '/where-we-come-from'
+      fullPath: '/where-we-come-from'
+      preLoaderRoute: typeof WhereWeComeFromRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entry/$id': {
@@ -323,6 +389,20 @@ declare module '@tanstack/react-router' {
       path: '/entry/$id'
       fullPath: '/entry/$id'
       preLoaderRoute: typeof EntryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal/': {
+      id: '/journal/'
+      path: '/journal'
+      fullPath: '/journal/'
+      preLoaderRoute: typeof JournalIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal/$slug': {
+      id: '/journal/$slug'
+      path: '/journal/$slug'
+      fullPath: '/journal/$slug'
+      preLoaderRoute: typeof JournalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/seo-check': {
@@ -347,9 +427,13 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TalcTvRoute: TalcTvRoute,
   TransparencyRoute: TransparencyRoute,
+  TrustLayerRoute: TrustLayerRoute,
   UploadReceiptRoute: UploadReceiptRoute,
   VerifyBusinessRoute: VerifyBusinessRoute,
+  WhereWeComeFromRoute: WhereWeComeFromRoute,
   EntryIdRoute: EntryIdRoute,
+  JournalSlugRoute: JournalSlugRoute,
+  JournalIndexRoute: JournalIndexRoute,
   ApiPublicSeoCheckRoute: ApiPublicSeoCheckRoute,
 }
 export const routeTree = rootRouteImport

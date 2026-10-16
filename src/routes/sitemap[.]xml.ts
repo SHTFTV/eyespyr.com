@@ -28,6 +28,11 @@ export const Route = createFileRoute("/sitemap.xml")({
         const BASE_URL = originFromRequest();
 
         const entries: SitemapEntry[] = [
+          { path: "/journal/business-name-and-source-records/" },
+          { path: "/journal/why-evidence-needs-a-date/" },
+          { path: "/journal/read-different-signals-separately/" },
+          { path: "/journal/keep-the-story-attached-to-its-source/" },
+          {path:"/journal/"},
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/trust-layer", changefreq: "monthly", priority: "0.9" },
           { path: "/how-it-works", changefreq: "monthly", priority: "0.8" },
