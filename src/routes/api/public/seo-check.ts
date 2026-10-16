@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getRequest } from "@tanstack/react-start/server";
 
 const ROUTES = [
   "/",
@@ -26,8 +25,7 @@ const REQUIRED_META: Array<{ kind: "name" | "property"; key: string }> = [
 ];
 
 const BAD_TEXT = [
-  "Lovable App",
-  "Lovable Generated Project",
+  "Generated Project",
   "Vite App",
   "REPLACE this",
 ];
@@ -79,6 +77,8 @@ async function auditRoute(base: string, route: string) {
   try {
     const res = await fetch(url, {
       headers: { "user-agent": "eyespyr-seo-check/1.0" },
+      redirect: "error",
+      signal: AbortSignal.timeout(10000),
     });
     status = res.status;
     if (!res.ok) {
@@ -126,26 +126,12 @@ async function auditRoute(base: string, route: string) {
   }
 }
 
-function originFromRequest(): string {
-  try {
-    const req = getRequest();
-    const proto = req.headers.get("x-forwarded-proto") ?? "https";
-    const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
-    if (host) return `${proto}://${host}`;
-  } catch {
-    /* no request context */
-  }
-  return "https://eyespyr.com";
-}
 
 export const Route = createFileRoute("/api/public/seo-check")({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        const url = new URL(request.url);
-        const base = (
-          url.searchParams.get("base") ?? originFromRequest()
-        ).replace(/\/$/, "");
+      GET: async () => {
+        const base = "https://www.eyespyr.com";
         const started = Date.now();
         const results = await Promise.all(ROUTES.map((r) => auditRoute(base, r)));
         const failed = results.filter((r) => r.errors.length).length;

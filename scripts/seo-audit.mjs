@@ -39,8 +39,7 @@ const REQUIRED_META = [
 ];
 
 const BAD_TEXT = [
-  "Lovable App",
-  "Lovable Generated Project",
+  "Generated Project",
   "Vite App",
   "REPLACE this",
 ];
