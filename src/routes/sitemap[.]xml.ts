@@ -28,6 +28,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const BASE_URL = originFromRequest();
 
         const entries: SitemapEntry[] = [
+          { path: "/business-review", changefreq: "monthly", priority: "0.8" },
           { path: "/businesses/full-flow-hydraulics/", changefreq: "monthly", priority: "0.8" },
           { path: "/journal/business-name-and-source-records/" },
           { path: "/journal/why-evidence-needs-a-date/" },

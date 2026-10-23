@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BusinessReviewRouteImport } from './routes/business-review'
 import { Route as EyespyrRouteImport } from './routes/eyespyr'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as NetworkRouteImport } from './routes/network'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessReviewRoute = BusinessReviewRouteImport.update({
+  id: '/business-review',
+  path: '/business-review',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EyespyrRoute = EyespyrRouteImport.update({
@@ -128,6 +134,7 @@ const ApiPublicSeoCheckRoute = ApiPublicSeoCheckRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/business-review': typeof BusinessReviewRoute
   '/eyespyr': typeof EyespyrRoute
   '/how-it-works': typeof HowItWorksRoute
   '/network': typeof NetworkRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/business-review': typeof BusinessReviewRoute
   '/eyespyr': typeof EyespyrRoute
   '/how-it-works': typeof HowItWorksRoute
   '/network': typeof NetworkRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/business-review': typeof BusinessReviewRoute
   '/eyespyr': typeof EyespyrRoute
   '/how-it-works': typeof HowItWorksRoute
   '/network': typeof NetworkRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/business-review'
     | '/eyespyr'
     | '/how-it-works'
     | '/network'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/business-review'
     | '/eyespyr'
     | '/how-it-works'
     | '/network'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/business-review'
     | '/eyespyr'
     | '/how-it-works'
     | '/network'
@@ -258,6 +270,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  BusinessReviewRoute: typeof BusinessReviewRoute
   EyespyrRoute: typeof EyespyrRoute
   HowItWorksRoute: typeof HowItWorksRoute
   NetworkRoute: typeof NetworkRoute
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-review': {
+      id: '/business-review'
+      path: '/business-review'
+      fullPath: '/business-review'
+      preLoaderRoute: typeof BusinessReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eyespyr': {
@@ -418,6 +438,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  BusinessReviewRoute: BusinessReviewRoute,
   EyespyrRoute: EyespyrRoute,
   HowItWorksRoute: HowItWorksRoute,
   NetworkRoute: NetworkRoute,

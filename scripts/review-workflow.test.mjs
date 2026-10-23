@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {canTransition,compareEvidence,reviewInvitation} from '../src/lib/review-workflow.ts';
+assert.equal(canTransition('collecting','published'),false);
+assert.equal(canTransition('in_review','needs_information'),true);
+assert.equal(canTransition('decision_ready','published'),true);
+const record={businessId:'example-business',entityName:'Example Business',issuer:'Example issuer',reference:'EXAMPLE-1',scope:'Example scope',expiresOn:'2026-10-01',sha256:'example'};
+assert.throws(()=>compareEvidence('another-business',[record],'2026-10-23'));
+const result=compareEvidence('example-business',[record,{...record,entityName:'Different legal name'}],'2026-10-23');
+assert(result.some(f=>f.field==='entity_name'&&f.status==='clarify'));
+assert(result.some(f=>f.status==='expired'));
+assert(result.some(f=>f.field==='duplicate_file'));
+assert(result.every(f=>!['verified','fraud','five_eyes'].includes(f.status)));
+const invitation=reviewInvitation({name:'Example Business',profileUrl:'https://www.eyespyr.com/'});
+assert(invitation.body.includes('when the vault is ready'));
+assert(!invitation.body.includes('https://vault'));
+console.log('Review workflow checks passed. These checks do not certify live vault access or email delivery.');
