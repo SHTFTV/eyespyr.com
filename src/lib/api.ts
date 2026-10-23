@@ -196,7 +196,7 @@ export async function getEntryDetail(id: string): Promise<EntryDetail & { demo?:
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()) as EntryDetail;
   } catch {
-    return { ...demoEntry(id), demo: true };
+    throw new Error("This business evidence record is unavailable. No verification result has been generated.");
   }
 }
 
@@ -245,7 +245,7 @@ export function demoEntry(id: string): EntryDetail {
         { timestamp: "2026-06-04T15:03:00Z", event: "Red Seal Plumbing certificate validated against ITA BC registry", status: "verified" },
         { timestamp: "2026-06-04T15:11:00Z", event: "WCB clearance letter — active, no outstanding claims", status: "verified" },
         { timestamp: "2026-06-04T15:22:00Z", event: "Liability insurance certificate confirmed with insurer", status: "verified" },
-        { timestamp: "2026-06-04T15:30:00Z", event: "Territory locked · Surrey, BC · Plumbing", status: "resolved" },
+        { timestamp: "2026-06-04T15:30:00Z", event: "Illustrative evidence review · Plumbing", status: "resolved" },
       ],
       scoreBreakdown: {
         baseline: 50,

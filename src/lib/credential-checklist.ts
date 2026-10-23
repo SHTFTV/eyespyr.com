@@ -6,17 +6,18 @@ export type Credential = {
   source?: string;
 };
 export const industries = [
-  ["catering", "Catering, food trucks & private chefs"],
-  ["creative", "Photography & videography"],
-  ["events", "Wedding & event services"],
+  ["building", "General contracting, carpentry & renovations"],
   ["electrical", "Electrical contracting"],
   ["gas", "Gas fitting & HVAC"],
   ["plumbing", "Plumbing & drainage"],
-  ["building", "General contracting, carpentry & renovations"],
   ["snow", "Snow removal & property maintenance"],
   ["landscape", "Landscaping & exterior services"],
   ["cleaning", "Cleaning services"],
+  ["health", "Health & wellness services"],
   ["trucking", "Trucking & freight carriers"],
+  ["catering", "Catering, food trucks & private chefs"],
+  ["creative", "Photography & videography"],
+  ["events", "Wedding & event services"],
   ["logistics", "Freight brokerage, courier & logistics"],
   ["passenger", "Passenger transport & shuttle services"],
   ["financial", "Financial advisors & financial planners"],
@@ -25,7 +26,6 @@ export const industries = [
   ["realestate", "Real estate & property management"],
   ["accounting", "Accounting, bookkeeping & tax services"],
   ["legal", "Legal & immigration services"],
-  ["health", "Health & wellness services"],
   ["engineering", "Engineering, architecture & design"],
   ["technology", "Technology, consulting & marketing"],
   ["retail", "Retail, manufacturing & product suppliers"],
@@ -46,11 +46,9 @@ export type Scope = {
   financialTitles?: boolean;
 };
 export const industryGroups = [
-  { label: "Food, weddings & creative services", ids: ["catering", "creative", "events"] },
-  {
-    label: "Trades & property services",
-    ids: ["electrical", "gas", "plumbing", "building", "snow", "landscape", "cleaning"],
-  },
+  {label:"Contractors, trades & property services",ids:["building","electrical","gas","plumbing","snow","landscape","cleaning"]},
+  {label:"Healthcare & wellness",ids:["health"]},
+  {label:"Food, weddings & creative services",ids:["catering","creative","events"]},
   { label: "Transport & logistics", ids: ["trucking", "logistics", "passenger"] },
   {
     label: "Financial & professional services",
@@ -66,7 +64,7 @@ export const industryGroups = [
   },
   {
     label: "Health, consumer & business services",
-    ids: ["health", "technology", "retail", "personal", "other"],
+    ids: ["technology", "retail", "personal", "other"],
   },
 ] as const;
 const sectorEvidence: Partial<Record<Industry, Credential[]>> = {

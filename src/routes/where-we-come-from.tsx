@@ -11,8 +11,8 @@ const DESC =
 
 const explore = [
   { to: "/trust-layer", label: "The Trust Layer" },
-  { to: "/network", label: "The Network" },
-  { to: "/verify-business", label: "Verify a Business" },
+  { to: "/network", label: "Industries" },
+  { to: "/verify-business", label: "Prepare a Check" },
 ] as const;
 
 export const Route = createFileRoute("/where-we-come-from")({
@@ -57,6 +57,7 @@ function Story() {
       />
 
       <article className="mx-auto max-w-2xl px-5 py-20 text-base leading-relaxed text-muted-foreground sm:px-8 sm:text-lg">
+        <p className="mb-6 text-lg text-foreground sm:text-xl">EyeSpyR is a standalone business registration and credential-check service. Its focus is checkable business identity and evidence-led professional expertise, starting with contractors.</p>
         <p className="text-lg text-foreground sm:text-xl">
           Before any of this was a platform, it was a job. Two decades of running small
           businesses &mdash; and doing the online marketing for them, and for a few select

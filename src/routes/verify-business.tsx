@@ -53,7 +53,7 @@ const emptyScope: Scope = {
 };
 const recipient = "partnerships@industryarmymarketing.com";
 function VerifyBusiness() {
-  const [industry, setIndustry] = useState<Industry>("catering");
+  const [industry, setIndustry] = useState<Industry>("building");
   const [scope, setScope] = useState<Scope>(emptyScope);
   const [location, setLocation] = useState("bc");
   const { enabled } = Route.useLoaderData();
@@ -118,14 +118,14 @@ function VerifyBusiness() {
         eyebrow="Business verification · Early access"
         title="YOUR BUSINESS."
         accent="YOUR PROFILE."
-        lead="Introduce your business, choose three service keywords and tell us where you work. Review your industry checklist, then contact our partnerships team."
+        lead="Introduce your business, choose three service keywords and tell us where you work. Review your industry checklist, then contact our review team."
       />
       <section className="mx-auto max-w-4xl px-5 pb-24 sm:px-8">
         <div className="panel mb-8 border-[color:var(--acid)] p-6 text-base leading-relaxed">
           <strong>Start with your business profile.</strong>{" "}
           {enabled
-            ? "Review your details, then send your enquiry to our partnerships team."
-            : "Fill out your details and preview an email to our partnerships team. Direct website sending is being connected; for now, send the prepared draft through your email app."}{" "}
+            ? "Review your details, then send your enquiry to our review team."
+            : "Fill out your details and preview an email to our review team. Direct website sending is being connected; for now, send the prepared draft through your email app."}{" "}
           Secure document uploads and badge activation are not open yet.
         </div>
         <form
@@ -208,7 +208,7 @@ function VerifyBusiness() {
             <div>
               <p className="font-semibold">Your three service keywords *</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Use a service or short phrase for each, such as drain cleaning, wedding catering or
+                Use a service or short phrase for each, such as drain cleaning, electrical contracting or
                 freight hauling.
               </p>
               <div className="mt-3 grid gap-4 sm:grid-cols-3">
@@ -389,7 +389,7 @@ function VerifyBusiness() {
           <fieldset className="panel space-y-5 p-6 sm:p-8">
             <legend className="px-2 text-xl font-bold">3. Contact & review</legend>
             <p className="text-muted-foreground">
-              Required fields are marked *. No payment, territory reservation or document upload is
+              Required fields are marked *. No payment or credential document upload is
               involved.
             </p>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -476,7 +476,7 @@ function VerifyBusiness() {
             <label className="flex items-start gap-3">
               <input type="checkbox" required name="consent" className="mt-1 h-5 w-5 shrink-0" />
               <span>
-                I agree to share these details with Industry Army Marketing’s partnerships team for
+                I agree to share these details with Industry Army Marketing’s review team for
                 this enquiry and to be contacted about it. This is not a newsletter signup.
               </span>
             </label>

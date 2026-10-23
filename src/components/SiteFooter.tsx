@@ -8,28 +8,27 @@ export function SiteFooter() {
         <div>
           <Wordmark className="text-2xl" />
           <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-            Business credential checks for the Industry Army Marketing network. Early access: secure
-            uploads and monitoring are still being prepared.
+            Standalone business registration and credential checks, with evidence-led profiles for AEO. Contractors first, with a framework for every profession.
           </p>
-          <p className="mono-label mt-4">Vancouver · BC · Early access</p>
+          <p className="mono-label mt-4">Business identity · Checkable expertise</p>
         </div>
         <FooterCol
           title="Platform"
           items={[
             { to: "/how-it-works", label: "How It Works" },
-            { to: "/transparency", label: "Scoring Transparency" },
-            { to: "/eyespyr", label: "The Badge" },
-            { to: "/scan", label: "Free Scan" },
-            { to: "/talc-tv", label: "TALC.tv Blast" },
+            { to: "/transparency", label: "Evidence Standards" },
+            { to: "/eyespyr", label: "Business Evidence" },
+            { to: "/scan", label: "Registration Check" },
+            
           ]}
         />
         <FooterCol
           title="Verify"
           items={[
             { to: "/verify-business", label: "For Businesses" },
-            { to: "/upload-receipt", label: "For Consumers" },
-            { to: "/network", label: "Coverage Map" },
-            { to: "/pricing", label: "Pricing" },
+            { to: "/upload-receipt", label: "Evidence & Corrections" },
+            { to: "/network", label: "Industries" },
+            { to: "/pricing", label: "Access" },
           ]}
         />
 
@@ -47,7 +46,7 @@ export function SiteFooter() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-5 sm:px-8">
           <p className="mono-label">© 2026 Industry Army Marketing Inc.</p>
           <p className="mono-label">
-            Status · <span className="text-[color:var(--acid)]">Preparing for launch</span>
+            Tool status · <span className="text-[color:var(--acid)]">Checklists available · review services in preparation</span>
           </p>
         </div>
       </div>

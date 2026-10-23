@@ -330,7 +330,7 @@ function TalcTvPage() {
         </h2>
         <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
           We syndicate one case study, one directory citation, and one contributor op-ed per
-          quarter to publications relevant to your trade and territory. Every placement carries a
+          quarter to publications relevant to your trade and service area. Every placement carries a
           dofollow link back to your EyeSpyR ledger and a citation to eyespyr.com.
         </p>
 

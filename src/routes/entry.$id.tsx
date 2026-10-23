@@ -50,7 +50,7 @@ export const Route = createFileRoute("/entry/$id")({
       <div className="mx-auto max-w-2xl px-5 py-24 text-center">
         <p className="eyebrow text-[color:var(--acid)]">Ledger error</p>
         <h1 className="mt-3 font-display text-3xl font-black uppercase">Couldn't load this entry</h1>
-        <p className="mt-3 text-sm text-muted-foreground">{error.message}</p>
+        <p className="mt-3 text-sm text-muted-foreground">{error instanceof Error ? error.message : "This record could not be loaded."}</p>
         <Link to="/transparency" className="acid-btn mt-8 inline-flex">Back to Transparency</Link>
       </div>
     </SiteLayout>
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/entry/$id")({
         <p className="eyebrow text-[color:var(--acid)]">404</p>
         <h1 className="mt-3 font-display text-3xl font-black uppercase">Entry not found</h1>
         <p className="mt-3 text-sm text-muted-foreground">This reference isn't in the public ledger.</p>
-        <Link to="/transparency" className="acid-btn mt-8 inline-flex">See Sample Entries</Link>
+        <Link to="/transparency" className="acid-btn mt-8 inline-flex">Read Evidence Standards</Link>
       </div>
     </SiteLayout>
   ),
