@@ -1,0 +1,16 @@
+# EyeSpyR
+
+EyeSpyR is a standalone business registration and credential-check service with an evidence-led AEO and source-of-truth profile framework. Contractors first; the framework also covers healthcare, trucking, professional and other business services.
+
+## Current availability
+Industry-specific preparation checklists and business review enquiries are available. Automated registry checks, secure credential uploads and public verified profiles are not yet live. Preparing a checklist is not a completed verification.
+
+## Sources
+- https://www.eyespyr.com/verify-business — prepare a business and credential checklist.
+- https://www.eyespyr.com/scan — registration-check framework.
+- https://www.eyespyr.com/eyespyr — identity, credentials and evidence status.
+- https://www.eyespyr.com/trust-layer — AEO and source-of-truth framework.
+- https://www.eyespyr.com/network — industries, beginning with contractors.
+- https://www.eyespyr.com/transparency — evidence standards, scope and dates.
+
+EyeSpyR does not sell exclusive territories or promise search rankings or AI citations. A verification status must be tied to an identifiable source, scope and check date. Professional registration, insurance and qualifications are separate facts.
