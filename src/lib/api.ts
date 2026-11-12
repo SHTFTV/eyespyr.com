@@ -1,8 +1,10 @@
-// EyeSpyR backend contract — matches api.industryarmymarketing.com spec.
-// Override at build time with VITE_EYESPYR_API_URL if needed.
+import { configuredBase, createCall, ack } from './api-transport';
+// EyeSpyR backend remains unavailable until an explicit endpoint is configured.
+// No implicit host, fabricated result or client-side queue.
 export const API_BASE: string =
-  (import.meta.env.VITE_EYESPYR_API_URL as string | undefined) ??
-  "https://api.industryarmymarketing.com";
+  configuredBase(import.meta.env.VITE_EYESPYR_API_URL, import.meta.env.DEV);
+
+const call = createCall(API_BASE);
 
 // ------------------------------------------------------------------
 // Shared types matching the backend contract
@@ -97,116 +99,28 @@ export interface CredentialResponse {
 }
 
 // ------------------------------------------------------------------
-// API calls with graceful demo-mode fallback
+// API calls require a confirmed server acknowledgement
 // ------------------------------------------------------------------
 
-export async function submitReceipt(form: FormData): Promise<ReceiptResponse & { demo?: boolean }> {
-  try {
-    const res = await fetch(`${API_BASE}/api/receipts`, { method: "POST", body: form });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as ReceiptResponse;
-  } catch {
-    return {
-      success: true,
-      referenceId: "REC-" + randCode(),
-      status: "received",
-      demo: true,
-    };
-  }
+export async function submitReceipt(form:FormData):Promise<ReceiptResponse & {demo?:boolean}> {const value=ack(await call('/api/receipts',{method:'POST',body:form}),'referenceId');if(!(Object.hasOwn(ALLOWED_TRANSITIONS,value.status)))throw new Error('Invalid saved receipt status.');return value;}
+export async function submitCredentials(form:FormData):Promise<CredentialResponse & {demo?:boolean}> {const value=ack(await call('/api/credentials',{method:'POST',body:form}),'businessId');if(!(Object.hasOwn(ALLOWED_TRANSITIONS,value.status)))throw new Error('Invalid saved credential status.');return value;}
+export interface NotifySubscribeResponse { success:boolean;entryId:string;email:string;demo?:boolean; }
+async function notify(action:string,entryId:string,email:string,token?:string):Promise<NotifySubscribeResponse>{
+ const value=ack(await call('/api/notify/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entryId,email,token})}),'entryId');
+ if(value.entryId!==entryId || value.email!==email) throw new Error('The acknowledgement did not match this request.');
+ return value;
 }
-
-export async function submitCredentials(
-  form: FormData,
-): Promise<CredentialResponse & { demo?: boolean }> {
-  try {
-    const res = await fetch(`${API_BASE}/api/credentials`, { method: "POST", body: form });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as CredentialResponse;
-  } catch {
-    return {
-      success: true,
-      businessId: "BIZ-" + randCode(),
-      status: "identity_check",
-      currentPill: "verifying",
-      demo: true,
-    };
-  }
-}
-
-export interface NotifySubscribeResponse {
-  success: boolean;
-  entryId: string;
-  email: string;
-  demo?: boolean;
-}
-
-/**
- * Opt an email address into status-change notifications for a ledger entry.
- * Backend contract: POST {API_BASE}/api/notify/subscribe
- *   { entryId: string, email: string, events?: IntegrityStatus[] }
- * Server should fire an email on every status transition
- * (received → identity_check → verifying → verified/weighted/flagged → resolved),
- * with a deep link back to https://eyespyr.com/entry/{entryId}.
- */
-export async function subscribeToEntryUpdates(
-  entryId: string,
-  email: string,
-): Promise<NotifySubscribeResponse> {
-  try {
-    const res = await fetch(`${API_BASE}/api/notify/subscribe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ entryId, email }),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as NotifySubscribeResponse;
-  } catch {
-    return { success: true, entryId, email, demo: true };
-  }
-}
-
-/**
- * Remove an email from status-change notifications for a ledger entry.
- * Backend contract: POST {API_BASE}/api/notify/unsubscribe
- *   { entryId: string, email: string, token?: string }
- * If `token` is provided (from an email footer one-click link), the server
- * skips the email match and uses the token instead.
- */
-export async function unsubscribeFromEntryUpdates(
-  entryId: string,
-  email: string,
-  token?: string,
-): Promise<NotifySubscribeResponse> {
-  try {
-    const res = await fetch(`${API_BASE}/api/notify/unsubscribe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ entryId, email, token }),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as NotifySubscribeResponse;
-  } catch {
-    return { success: true, entryId, email, demo: true };
-  }
-}
-
-export async function getEntryDetail(id: string): Promise<EntryDetail & { demo?: boolean }> {
-  try {
-    const res = await fetch(`${API_BASE}/api/entries/${encodeURIComponent(id)}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()) as EntryDetail;
-  } catch {
-    throw new Error("This business evidence record is unavailable. No verification result has been generated.");
-  }
+export function subscribeToEntryUpdates(entryId:string,email:string){return notify('subscribe',entryId,email);}
+export function unsubscribeFromEntryUpdates(entryId:string,email:string,token?:string){return notify('unsubscribe',entryId,email,token);}
+export async function getEntryDetail(id:string):Promise<EntryDetail & {demo?:boolean}>{
+ const value=await call('/api/entries/'+encodeURIComponent(id));
+ if(!value || value.id!==id || !['receipt','credential'].includes(value.type) || !Array.isArray(value.auditTrail) || !(Object.hasOwn(ALLOWED_TRANSITIONS,value.integrityStatus)) || value.demo===true) throw new Error('No valid evidence record was returned. No verification result has been generated.');
+ return value;
 }
 
 // ------------------------------------------------------------------
 // Helpers
 // ------------------------------------------------------------------
-
-function randCode(): string {
-  return Math.random().toString(36).slice(2, 7).toUpperCase() + "-XM";
-}
 
 export function statusColor(status: IntegrityStatus): string {
   switch (status) {

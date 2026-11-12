@@ -12,6 +12,7 @@ import {
   type IntegrityStatus,
   type ScoreFactor,
 } from "@/lib/api";
+import { ApiRequestError } from '@/lib/api-transport';
 import ogImg from "@/assets/og-home.jpg";
 
 const SITE_URL = "https://eyespyr.com";
@@ -19,9 +20,14 @@ const OG_IMAGE = `${SITE_URL}${ogImg}`;
 
 export const Route = createFileRoute("/entry/$id")({
   loader: async ({ params }) => {
-    const entry = await getEntryDetail(params.id);
-    if (!entry?.id) throw notFound();
-    return entry;
+    try {
+      const entry = await getEntryDetail(params.id);
+      if (!entry?.id) throw notFound();
+      return entry;
+    } catch (error) {
+      if (error instanceof ApiRequestError && error.status === 404) throw notFound();
+      throw error;
+    }
   },
   head: ({ loaderData }) => {
     const id = loaderData?.id ?? "Entry";
@@ -254,7 +260,7 @@ function ShareButton({ id }: { id: string }) {
 function EmailAlerts({ entryId }: { entryId: string }) {
   const [email, setEmail] = useState("");
   const [mode, setMode] = useState<"sub" | "unsub">("sub");
-  const [state, setState] = useState<"idle" | "sending" | "subscribed" | "unsubscribed" | "demo">(
+  const [state, setState] = useState<"idle" | "sending" | "subscribed" | "unsubscribed" | "error">(
     "idle",
   );
 
@@ -262,12 +268,14 @@ function EmailAlerts({ entryId }: { entryId: string }) {
     e.preventDefault();
     if (!email.trim()) return;
     setState("sending");
+    try {
     const res =
       mode === "sub"
         ? await subscribeToEntryUpdates(entryId, email.trim())
         : await unsubscribeFromEntryUpdates(entryId, email.trim());
-    if (res.demo) setState("demo");
-    else setState(mode === "sub" ? "subscribed" : "unsubscribed");
+    if (!res.success) throw new Error("Request not accepted");
+    setState(mode === "sub" ? "subscribed" : "unsubscribed");
+    } catch { setState("error"); }
   }
 
   const busy = state === "sending";
@@ -328,9 +336,9 @@ function EmailAlerts({ entryId }: { entryId: string }) {
                   : "Unsubscribe"}
         </button>
       </form>
-      {state === "demo" && (
+      {state === "error" && (
         <p className="mono-label text-muted-foreground sm:col-span-2">
-          DEMO MODE · Backend unreachable — request queued locally.
+          Notifications are unavailable. This request was not confirmed or queued.
         </p>
       )}
     </div>

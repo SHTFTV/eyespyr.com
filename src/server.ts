@@ -1,4 +1,6 @@
 import "./lib/error-capture";
+// @ts-expect-error Server-only JavaScript implementation.
+import {handleBackend} from "../backend/runtime.mjs";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
@@ -47,6 +49,8 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const backendResponse = await handleBackend(request);
+      if (backendResponse) return backendResponse;
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
