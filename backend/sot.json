@@ -1,0 +1,15 @@
+{
+  "domain": "eyespyr.com",
+  "workerId": "eyespyr-site-bot",
+  "revision": "2026-11-11.1",
+  "status": "approved",
+  "authority": "Existing canonical docs/evidence-review-flow.md and owner-authorized backend completion; no new verification criteria",
+  "purpose": "Private business credential and evidence collection, issuer-source findings and authenticated human review",
+  "automaticPublicDecisions": false,
+  "liveEvidenceCollection": false,
+  "retentionApproved": false,
+  "editorialImages": "Company-original/source featured images first; otherwise clearly labelled original illustrations; no Shutterstock",
+  "failurePolicy": "Isolate each work item, retain same job, five bounded exponential retries and persistent actionable blockers; unknown dependencies remain incomplete",
+  "operationally_complete": false,
+  "mandatoryProof": ["canonical source deployed", "hosted private database", "live auth and role isolation", "private storage hash receipt", "quarantine and safe scanning", "verified invitation sender and receiving inbox", "owner-approved retention", "human review", "native scheduled worker", "independent owner alert receipt"]
+}

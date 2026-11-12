@@ -1,3 +1,8 @@
+export function isCalendarDate(value:string):boolean {
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+ const date=new Date(value+'T00:00:00.000Z');
+ return !Number.isNaN(date.getTime()) && date.toISOString().slice(0,10)===value;
+}
 export const reviewSteps = [
   { id: 'profile', title: 'Your profile, ready to check', detail: 'Receive your own page card and confirm the business name, real operating address, service areas and contact person.' },
   { id: 'invite', title: 'An invitation made for your business', detail: 'Open a private, expiring invitation. Confirm you represent the business before accessing its evidence request.' },
@@ -32,14 +37,15 @@ export type EvidenceRecord={businessId:string;entityName:string;issuer:string;re
 export type EvidenceFinding={field:string;status:'matches'|'clarify'|'expired'|'not_checked';note:string};
 export function compareEvidence(businessId:string,records:EvidenceRecord[],asOf:string):EvidenceFinding[]{
  if(records.some(r=>r.businessId!==businessId))throw new Error('Evidence is outside this business review.');
- if(!/^\d{4}-\d{2}-\d{2}$/.test(asOf)||Number.isNaN(Date.parse(asOf)))throw new Error('A review date is required.');
+ if(!isCalendarDate(asOf))throw new Error('A review date is required.');
  const normal=(s:string)=>s.normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase('en-CA');
  const names=new Set(records.map(r=>normal(r.entityName)).filter(Boolean));
  const findings:EvidenceFinding[]=[{field:'entity_name',status:names.size>1?'clarify':names.size===1?'matches':'not_checked',note:names.size>1?'Names differ. Ask whether this is an authorised trading name, another entity or a transcription error.':'Matching supplied text is not independent identity verification.'}];
  for(const r of records){
   if(!r.issuer.trim()||!r.reference?.trim())findings.push({field:'issuer_reference',status:'not_checked',note:'Issuer or reference is missing; obtain a checkable source.'});
-  if(r.expiresOn){if(!/^\d{4}-\d{2}-\d{2}$/.test(r.expiresOn)||Number.isNaN(Date.parse(r.expiresOn)))findings.push({field:'expiry',status:'clarify',note:'Expiry date could not be read reliably.'});else if(r.expiresOn<asOf)findings.push({field:'expiry',status:'expired',note:'The supplied expiry precedes the review date. Request a current record or issuer clarification.'});}
-  if(r.validFrom&&r.validFrom>asOf)findings.push({field:'effective_date',status:'clarify',note:'The record is future-dated relative to this review.'});
+  if(r.expiresOn){if(!isCalendarDate(r.expiresOn))findings.push({field:'expiry',status:'clarify',note:'Expiry date could not be read reliably.'});else if(r.expiresOn<asOf)findings.push({field:'expiry',status:'expired',note:'The supplied expiry precedes the review date. Request a current record or issuer clarification.'});}
+  if(r.validFrom&&!isCalendarDate(r.validFrom))findings.push({field:'effective_date',status:'clarify',note:'Effective date could not be read reliably.'});
+  else if(r.validFrom&&r.validFrom>asOf)findings.push({field:'effective_date',status:'clarify',note:'The record is future-dated relative to this review.'});
   if(!r.scope.trim())findings.push({field:'scope',status:'not_checked',note:'Covered work or professional scope is missing.'});
  }
  const hashes=records.map(r=>r.sha256).filter(Boolean);if(new Set(hashes).size<hashes.length)findings.push({field:'duplicate_file',status:'clarify',note:'The same file was supplied more than once. It is one source, not independent corroboration.'});
